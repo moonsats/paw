@@ -18,6 +18,9 @@ import os, sys
 import requests
 import time
 import json
+import zlib
+import base64
+import string
 
 ##@@ Package 모듈
 ##------------------------------------------------------------
@@ -85,39 +88,17 @@ def send_post():
     return res.text
 
 
-
-if __name__ == "__main__":
-    # app.run(debug=True, host='0.0.0.0', port=4545)
-    app.run(debug=True, host='127.0.0.1', port=6868)
-
-    ## NOTE: post test
-    # browser:: http://127.0.0.1:6868/send_post
+plantuml_alphabet = string.digits + string.ascii_uppercase + string.ascii_lowercase + '-_'
+base64_alphabet = string.ascii_uppercase + string.ascii_lowercase + string.digits + '+/'
+b64_to_plantuml = bytes.maketrans(base64_alphabet.encode('utf-8'), plantuml_alphabet.encode('utf-8'))
+plantuml_to_b64 = bytes.maketrans(plantuml_alphabet.encode('utf-8'), base64_alphabet.encode('utf-8'))
 
 
-# # Forked from https://gist.github.com/dyno/94ef6bb9644a88d6981d6a1a9eb70802
-# # https://plantuml.com/text-encoding
-# # https://github.com/dougn/python-plantuml/blob/master/plantuml.py#L64
-
-# import zlib
-# import base64
-# import string
-
-# plantuml_alphabet = string.digits + \
-#     string.ascii_uppercase + string.ascii_lowercase + '-_'
-# base64_alphabet = string.ascii_uppercase + \
-#     string.ascii_lowercase + string.digits + '+/'
-# b64_to_plantuml = bytes.maketrans(base64_alphabet.encode(
-#     'utf-8'), plantuml_alphabet.encode('utf-8'))
-# plantuml_to_b64 = bytes.maketrans(plantuml_alphabet.encode(
-#     'utf-8'), base64_alphabet.encode('utf-8'))
-
-
-# def plantuml_encode(plantuml_text):
-#     """zlib compress the plantuml text and encode it for the plantuml server"""
-#     zlibbed_str = zlib.compress(plantuml_text.encode('utf-8'))
-#     compressed_string = zlibbed_str[2:-4]
-#     return base64.b64encode(compressed_string).translate(b64_to_plantuml).decode('utf-8')
-
+def plantuml_encode(plantuml_text):
+    """zlib compress the plantuml text and encode it for the plantuml server"""
+    zlibbed_str = zlib.compress(plantuml_text.encode('utf-8'))
+    compressed_string = zlibbed_str[2:-4]
+    return base64.b64encode(compressed_string).translate(b64_to_plantuml).decode('utf-8')
 
 # def plantuml_decode(plantuml_url):
 #     """decode plantuml encoded url back to plantuml text"""
@@ -128,36 +109,54 @@ if __name__ == "__main__":
 #     return dec.decompress(header + data).decode("utf-8")
 
 
-# uml = "Bob -> Alice : hi, Alice"
-# encoded = plantuml_encode(uml)
-# print(f"encoded: {encoded}")
-# # uml = """
-# # @startuml
-# # Bob -> Alice : hello
-# # @enduml
-# # """
+if __name__ == "__main__":
+    # app.run(debug=True, host='0.0.0.0', port=4545)
+    app.run(debug=True, host='127.0.0.1', port=6868)
 
-# # url = "SyfFKj2rKt3CoKnELR1Io4ZDoSa700=="
+    ## NOTE: post test
+    # browser:: http://127.0.0.1:6868/send_post
 
-# # print(plantuml_decode(url))
-# # print(plantuml_encode(plantuml_decode(url)))
+    # uml = "Bob -> Alice : hi, Alice"
+    # encoded = plantuml_encode(uml)
+    # print(f"encoded: {encoded}")
+    # f"https://www.plantuml.com/plantuml/png/{encoded}"
+    # "https://www.plantuml.com/plantuml/png/SyfFKj2rKt3CoKnELR1IoCZKWR01"
+
+    # Forked from https://gist.github.com/dyno/94ef6bb9644a88d6981d6a1a9eb70802
+    # https://plantuml.com/text-encoding
+    # https://github.com/dougn/python-plantuml/blob/master/plantuml.py#L64
 
 
-# # import base64
 
-# # uml = """
-# # @startuml
-# # Bob -> Alice : hello
-# # @enduml
-# # """
 
-# # uml_bytes = uml.encode('ascii')
-# # uml_base64 = base64.b64encode(uml_bytes)
-# # uml_base64_str = uml_base64.decode('ascii')
 
-# # print(f"uml_bytes: {uml_bytes}")
-# # print(f"uml_base64: {uml_base64}")
-# # print(f"uml_base64_str: {uml_base64_str}")
+    # uml = """
+    # @startuml
+    # Bob -> Alice : hello
+    # @enduml
+    # """
+
+    # # url = "SyfFKj2rKt3CoKnELR1Io4ZDoSa700=="
+
+    # # print(plantuml_decode(url))
+    # # print(plantuml_encode(plantuml_decode(url)))
+
+
+    # # import base64
+
+    # # uml = """
+    # # @startuml
+    # # Bob -> Alice : hello
+    # # @enduml
+    # # """
+
+    # # uml_bytes = uml.encode('ascii')
+    # # uml_base64 = base64.b64encode(uml_bytes)
+    # # uml_base64_str = uml_base64.decode('ascii')
+
+    # # print(f"uml_bytes: {uml_bytes}")
+    # # print(f"uml_base64: {uml_base64}")
+    # # print(f"uml_base64_str: {uml_base64_str}")
 
 
 
