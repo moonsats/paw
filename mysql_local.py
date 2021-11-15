@@ -2,36 +2,48 @@ import pymysql
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
-user_id = os.environ.get("USER_ID")
-user_pw = os.environ.get("USER_PW")
-mysql_id = os.environ.get("MYSQL_ID")
-mysql_pw = os.environ.get("MYSQL_PW")
+def dbcon(db_name="mysql"): 
+    load_dotenv()
+    host_ip = os.environ.get("HOST_IP")
+    mysql_id = os.environ.get("MYSQL_ID")
+    mysql_pw = os.environ.get("MYSQL_PW")
 
-
-def dbcon(db_name="sats"): 
     return pymysql.connect(
-        host=f'{user_id}.mysql.pythonanywhere-services.com', 
-        user=user_id, 
-        password=mysql_pw,
-        db=f'{user_id}${db_name}', 
+        host=host_ip, 
+        user=mysql_id, 
+        password=mysql_pw, 
+        db=db_name, 
         charset='utf8'
     )
 
-def create_table(db_name="sats"): 
-    try: 
-        db = dbcon(db_name=db_name) 
-        c = db.cursor() 
-        c.execute("CREATE TABLE student (num varchar(50), name varchar(50))") 
-        db.commit() 
-    except Exception as e: 
-        print('db error:', e) 
-    finally: 
-        db.close() 
-        
+
+# def create_db(db_name="sats"):
+#     try: 
+#         db = dbcon(db_name="mysql") 
+#         c = db.cursor() 
+#         c.execute(f"CREATE DATABASE {db_name}") 
+#         db.commit() 
+#     except Exception as e: 
+#         print('db error:', e) 
+#     finally: 
+#         db.close() 
+    
+
+# def create_table(db_name="sats"): 
+#     try: 
+#         db = dbcon(db_name=db_name) 
+#         c = db.cursor() 
+#         c.execute("CREATE TABLE student (num varchar(50), name varchar(50))") 
+#         db.commit() 
+#     except Exception as e: 
+#         print('db error:', e) 
+#     finally: 
+#         db.close() 
+
+
 def insert_data(num, name): 
     try: 
-        db = dbcon() 
+        db = dbcon(db_name="sats") 
         c = db.cursor() 
         setdata = (num, name) 
         c.execute("INSERT INTO student VALUES (%s, %s)", setdata) 
@@ -41,10 +53,11 @@ def insert_data(num, name):
     finally: 
         db.close() 
 
+
 def select_all(): 
     ret = list() 
     try: 
-        db = dbcon()
+        db = dbcon(db_name="sats")
         c = db.cursor() 
         c.execute('SELECT * FROM student') 
         ret = c.fetchall() # for row in c.execute('SELECT * FROM student'): # ret.append(row) 
@@ -52,13 +65,13 @@ def select_all():
         print('db error:', e) 
     finally: 
         db.close() 
-    
+ 
     return ret 
 
 def select_num(num): 
     ret = () 
     try: 
-        db = dbcon(db_name=db_name)
+        db = dbcon() 
         c = db.cursor() 
         setdata = (num,) 
         c.execute('SELECT * FROM student WHERE num = %s', setdata) 
@@ -70,9 +83,8 @@ def select_num(num):
     return ret
 
 
-create_table() 
+# create_db(db_name="sats")
+# create_table(db_name="sats") 
 insert_data('20201234', '파이썬') 
 ret = select_all() 
 print(ret)
-
-# mysql -u moonstock -h moonstock.mysql.pythonanywhere-services.com -p 'moonstock$default'
