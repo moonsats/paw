@@ -27,6 +27,7 @@ import string
 # from flask import Flask
 from flask import Flask, render_template, request
 
+
 ##@@ User 모듈
 ##------------------------------------------------------------
 # sys.path.append(os.path.join(os.path.dirname(__file__), '../../Assistant/Message'))
@@ -43,13 +44,33 @@ from flask import Flask, render_template, request
 ##@@@ 보조 함수
 ##============================================================
 
-##@@ Section
+##@@ Section mysql
 ##------------------------------------------------------------
+# mysql = MySQL()
+# app.config['MYSQL_HOST'] = '아이디.mysql.pythonanywhere-services.com'
+# app.config['MYSQL_USER'] = '아이디'
+# app.config['MYSQL_PASSWORD'] = '비밀번호'
+# app.config['MYSQL_DB'] ='아이디$membership'
+# mysql=MySQL(app)
 
 
+
+
+conn = pymysql.connect(host='localhost', user='root', password='password', db='developer', charset='utf8') 
+cursor = conn.cursor() 
+
+sql = '''CREATE TABLE user ( 
+id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+email varchar(255), 
+department varchar(255) 
+) 
+''' 
+
+cursor.execute(sql) 
 
 ##@@@ 실행 함수
 ##============================================================
+
 
 ##@@ Section
 ##------------------------------------------------------------
